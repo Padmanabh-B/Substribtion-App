@@ -1,27 +1,45 @@
-import React, { useState } from "react"
+import React, { useState,useContext } from "react"
+import { useNavigate } from 'react-router-dom';
 import Button from "../Components/Button";
 import Input from "../Components/Input";
 import axios from 'axios';
 import toast from "react-hot-toast";
+import {UserContext} from "../Context/index"
+
+
 
 const Register = () => {
-    const [name, setName] = useState("paddu");
-    const [email, setEmail] = useState("abc@dev.com");
-    const [password, setPassword] = useState("12345");
+
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    //context
+
+    const [state, setState] = useContext(UserContext);
+
+
+    let navigate = useNavigate();
 
 
     const handleClick = async (e) => {
         // console.log(name, email, password);
         try {
             e.preventDefault();
-            const { data } = await axios.post('http://localhost:8000/api/register', {
+            const { data } = await axios.post('/register', {
                 name, email, password,
             });
             console.log(data);
             if (data.error) {
                 toast.error(data.error);
             } else {
-                toast.success("Registration Successful... Please Login");
+                setName("")
+                setEmail("")
+                setPassword("")
+                toast.success(`Hey ${data.user.name}. You are Part of Team Now Congrats`);
+                setState(data);
+                localStorage.setItem('auth', JSON.stringify(data))
+                navigate("/login")
             }
         } catch (err) {
             console.log(err);

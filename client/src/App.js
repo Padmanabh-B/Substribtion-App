@@ -14,7 +14,7 @@ function App() {
   return (
     <Router>
       <Nav/>
-      <Toaster position={"right-top"} toastOptions={{duration:1000}}/>
+      <Toaster position={"right-top"} toastOptions={{duration:2000}}/>
       <Routes>
         <Route path="/" element={ <Home /> } exact />
         <Route path="/register" element={ <Register /> } exact  />

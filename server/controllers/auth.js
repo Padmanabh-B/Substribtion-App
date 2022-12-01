@@ -1,6 +1,8 @@
 const express = require("express");
 const User = require("../models/user");
 const { hashPassword, comparePassword } = require("../helpers/auth")
+const jwt = require("jsonwebtoken")
+
 
 exports.register = async (req, res) => {
     try {
@@ -17,7 +19,13 @@ exports.register = async (req, res) => {
             })
         }
 
-        
+        const exist = await User.findOne({ email })
+        if (exist) {
+            return res.json({
+                error: "Email is Taken"
+            })
+        }
+
         //hash password
         const hashedPassword = await hashPassword(password);
 
@@ -25,24 +33,50 @@ exports.register = async (req, res) => {
             const user = await new User({
                 name, email, password: hashedPassword
             }).save();
-            console.log(user);
+            //create signed token 
+            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" })
+
 
             const { password, ...rest } = user._doc;
-            return res.json()
+            return res.json({ token,user: rest })
 
         } catch (error) {
             console.log(error);
         }
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
+export const login = async (req, res) => {
+    try {
+        //check for the email
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) {
+            return res.json({
+                error: "No user Found"
+            })
+        }
+        //check for the password
+        const match = await comparePassword(req.body.password, user.password)
+        if (!match) {
+            return res.json({
+                error: "Wrong Password",
+            })
+        }
+        //create signed token 
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" })
 
-
+        const { password, ...rest } = user._doc;
         res.json({
-            data: "this is register endpoint"
+            token,
+            user: rest,
         })
 
 
+
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
 }
