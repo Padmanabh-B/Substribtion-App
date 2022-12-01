@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
+import { useNavigate } from "react-router-dom"
 import PriceCard from "../Components/Cards/PriceCard";
 import axios from "axios"
-const Home = () => {
-    const [prices, setPrices] = useState("");
-    useEffect(() => {
+import { UserContext } from "../Context/index"
 
+
+
+const Home = () => {
+    const [state, setState] = useContext(UserContext)
+    const [prices, setPrices] = useState("");
+
+    let navigate = useNavigate();
+
+
+    useEffect(() => {
         fetchPrices();
     }, [])
 
@@ -13,8 +22,18 @@ const Home = () => {
         const { data } = await axios.get("/prices");
         setPrices(data);
     };
-    const handleClick = async (e) => {
+    const handleClick = async (e, price) => {
         e.preventDefault();
+
+        if (state && state.token) {
+            const { data } = await axios.post('/create-subsription',{
+                priceId: price.id
+            });
+            window.open(data);
+        } else {
+            navigate("/register")
+        }
+
     }
 
     return (

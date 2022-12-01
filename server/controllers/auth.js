@@ -1,7 +1,9 @@
 const express = require("express");
 const User = require("../models/user");
 const { hashPassword, comparePassword } = require("../helpers/auth")
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
+
 
 
 exports.register = async (req, res) => {
@@ -29,16 +31,23 @@ exports.register = async (req, res) => {
         //hash password
         const hashedPassword = await hashPassword(password);
 
+        //create account in stripe
+        const customer = await stripe.customers.create({
+            email,
+        });
+
+
+
         try {
             const user = await new User({
-                name, email, password: hashedPassword
+                name, email, password: hashedPassword, stripe_customer_id: customer.id
             }).save();
             //create signed token 
             const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" })
 
 
             const { password, ...rest } = user._doc;
-            return res.json({ token,user: rest })
+            return res.json({ token, user: rest })
 
         } catch (error) {
             console.log(error);

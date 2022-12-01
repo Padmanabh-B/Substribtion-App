@@ -1,16 +1,20 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { Link } from "react-router-dom"
+import { UserContext } from "../../Context/index"
+
 
 const PriceCard = ({ price, handleSubsription }) => {
 
+    const [state] = useContext(UserContext)
     const dynamicDescription = (price) => {
         if (price.nickname === 'BASIC') {
-            return "5 Exclusive Stocks";
+            return "300 Websites";
         } else if
             (price.nickname === 'STANDARD') {
-            return "10 Exclusive Stocks";
+            return "350 Websites";
         } else if
             (price.nickname === 'PREMIUM') {
-            return "20 Exclusive Stocks";
+            return "400 Websites";
         }
     }
 
@@ -27,6 +31,10 @@ const PriceCard = ({ price, handleSubsription }) => {
     const borderStyle = () => {
         return price.nickname === 'PREMIUM' ? "border-danger" : '';
 
+    }
+
+    const buttonText = () => {
+        return state && state.token ? "Buy The Plan" : "Sign Up"
     }
 
 
@@ -48,12 +56,24 @@ const PriceCard = ({ price, handleSubsription }) => {
                         </h1>
                         <ul className="list-unstyled mt-3 mt-4">
                             <li className='fw-bold'>{ dynamicDescription(price) }</li>
-                            <li>Free Market Ananlysis</li>
-                            <li>Email Support </li>
-                            <li>Helth Center Access</li>
+                            <li className='mt-3 mb-3'>200 GB SSD Storage</li>
+                            <li className='mt-3 mb-3'>Free Email</li>
+                            <li className='mt-3 mb-3'>Unlimited Bandwidth</li>
+                            <li className='mt-3 mb-3'>Unlimited Databases</li>
+                            <ul className='list-unstyled mt-3 mt-4'>
+                                <li className='mt-3 mb-3' >3 GB RAM</li>
+                                <li className='mt-3 mb-3' >2 CPU Cores</li>
+                                <li className='mt-3 mb-3'>Dedicated Resources</li>
+                                <li className='mt-3 mb-3' >Unlimited Free SSL</li>
+                            </ul>
                         </ul>
-                        <button onClick={ () => handleSubsription(price) }
-                            className={ `w-100 btn btn-lg ${buttonStyle()} border border-white text-white ` } >Signup</button>
+                        <Link to="/register">
+                            <button
+                                // onClick={ () => handleSubsription(price) }
+                                className={ `w-100 btn btn-lg ${buttonStyle()} border border-white text-white ` } >{ buttonText() }
+
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -64,3 +84,4 @@ const PriceCard = ({ price, handleSubsription }) => {
 
 
 export default PriceCard;
+
