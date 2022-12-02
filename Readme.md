@@ -1,4 +1,4 @@
-# Shopify Clone (Responsive)
+# Subsription Application
 
 ![iNeuron](https://img.shields.io/badge/NodeJS/MongoDB/Express%20-MERN-green)
 
