@@ -26,13 +26,11 @@ const Home = () => {
         e.preventDefault();
 
         if (state && state.token) {
-            const { data } = await axios.post('/create-subsription',{
+            const { data } = await axios.post('/create-subscription', {
                 priceId: price.id
             });
             window.open(data);
-        } else {
-            navigate("/register")
-        }
+        } 
 
     }
 
